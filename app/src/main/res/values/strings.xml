@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Morsy</string>
+    <string name="generate_icd">Generate Code</string>
 </resources>
