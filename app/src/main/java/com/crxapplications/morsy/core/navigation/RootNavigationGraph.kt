@@ -9,13 +9,18 @@ import com.crxapplications.morsy.flows.morse.presentation.page.PromptFormPage
 fun NavGraphBuilder.rootNavigationGraph(navController: NavController) {
     composable(route = Route.PromptForm.route) {
         PromptFormPage(
-            convertOnPress = {_, _ ->
-                println("PRESS")
+            openConverterPage = { text ->
+                navController.navigate(
+                    route = Route.Converter.route.replace(
+                        "{text}",
+                        text
+                    )
+                )
             }
         )
     }
 
-    composable(route = Route.Converter.route) {
-        ConverterPage()
+    composable(route = Route.Converter.route) { navBackStackEntry ->
+        ConverterPage(text = navBackStackEntry.arguments?.getString("text") ?: "")
     }
 }

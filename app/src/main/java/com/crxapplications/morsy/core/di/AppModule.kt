@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.res.AssetManager
 import androidx.room.Room
 import com.crxapplications.morsy.core.data.database.MorsyDatabase
+import com.crxapplications.morsy.flows.morse.data.dao.PromptsDao
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object AppModule {
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
@@ -38,4 +39,10 @@ class AppModule {
     fun provideDatabase(@ApplicationContext context: Context): MorsyDatabase = Room.databaseBuilder(
         context, MorsyDatabase::class.java, "morsy"
     ).build()
+
+    @Singleton
+    @Provides
+    fun providePromptsDao(
+        database: MorsyDatabase,
+    ): PromptsDao = database.promptDao()
 }

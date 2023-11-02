@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Morsy</string>
     <string name="generate_icd">Generate Code</string>
+    <string name="message_info_icd">Message Info</string>
+    <string name="message_info_label">All the prompts will be saved for later use!</string>
+    <string name="message_input_label">Message</string>
+    <!--  Errors  -->
+    <string name="general_error">Something went wrong!</string>
 </resources>

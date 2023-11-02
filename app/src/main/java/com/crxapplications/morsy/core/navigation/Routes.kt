@@ -8,7 +8,7 @@ sealed class Route(val route: String, val arguments: List<NamedNavArgument> = em
     object Root: Route(route = "root")
     object PromptForm : Route(route = "prompt-form")
     object Converter : Route(
-        route = "converter/{id}",
-        arguments = listOf(navArgument("id") { type = NavType.IntType })
+        route = "converter/{text}",
+        arguments = listOf(navArgument("text") { type = NavType.IntType })
     )
 }
