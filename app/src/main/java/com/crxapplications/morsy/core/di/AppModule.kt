@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.content.res.AssetManager
 import androidx.room.Room
 import com.crxapplications.morsy.core.data.database.MorsyDatabase
+import com.crxapplications.morsy.core.service.AssetsFileService
+import com.crxapplications.morsy.core.service.AssetsFileServiceImpl
 import com.crxapplications.morsy.flows.morse.data.dao.PromptsDao
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -15,6 +17,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dagger.Binds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -45,4 +48,10 @@ object AppModule {
     fun providePromptsDao(
         database: MorsyDatabase,
     ): PromptsDao = database.promptDao()
+
+    @Singleton
+    @Provides
+    fun provideAssetsFileService(@ApplicationContext context: Context): AssetsFileService =
+        AssetsFileServiceImpl(context = context)
+
 }

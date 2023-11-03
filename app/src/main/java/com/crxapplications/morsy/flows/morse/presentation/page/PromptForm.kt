@@ -79,7 +79,6 @@ fun PromptFormPage(
         }
     }
 
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -144,7 +143,10 @@ fun PromptFormPage(
                         count = promptsList.size,
                     ) { index ->
                         HistoryPromptCard(
-                            prompt = promptsList[index]
+                            prompt = promptsList[index],
+                            onCardPress = { text ->
+                                openConverterPage(text)
+                            }
                         )
                     }
                 }

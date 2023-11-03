@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,12 +17,16 @@ import androidx.compose.ui.unit.dp
 import com.crxapplications.morsy.core.helper.pretty
 import com.crxapplications.morsy.flows.morse.domain.model.Prompt
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryPromptCard(prompt: Prompt) {
+fun HistoryPromptCard(prompt: Prompt, onCardPress: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        onClick = {
+            onCardPress(prompt.text)
+        }
     ) {
         Column(
             modifier = Modifier
