@@ -8,6 +8,8 @@ import androidx.room.Room
 import com.crxapplications.morsy.core.data.database.MorsyDatabase
 import com.crxapplications.morsy.core.service.AssetsFileService
 import com.crxapplications.morsy.core.service.AssetsFileServiceImpl
+import com.crxapplications.morsy.core.service.SoundPlayerService
+import com.crxapplications.morsy.core.service.SoundPlayerServiceImpl
 import com.crxapplications.morsy.flows.morse.data.dao.PromptsDao
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -53,5 +55,9 @@ object AppModule {
     @Provides
     fun provideAssetsFileService(@ApplicationContext context: Context): AssetsFileService =
         AssetsFileServiceImpl(context = context)
+
+    @Singleton
+    @Provides
+    fun provideSoundPlayerService(@ApplicationContext context: Context): SoundPlayerService = SoundPlayerServiceImpl(context = context)
 
 }

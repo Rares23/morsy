@@ -2,8 +2,10 @@ package com.crxapplications.morsy.flows.morse.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.crxapplications.morsy.R
 import com.crxapplications.morsy.core.helper.Response
 import com.crxapplications.morsy.core.helper.UiText
+import com.crxapplications.morsy.core.service.SoundPlayerService
 import com.crxapplications.morsy.flows.morse.domain.model.Symbol
 import com.crxapplications.morsy.flows.morse.domain.usecase.ConvertToMorseCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ConverterViewModel @Inject constructor(
     private val convertToMorseCodeUseCase: ConvertToMorseCodeUseCase,
+    private val soundPlayerService: SoundPlayerService,
 ) : ViewModel() {
     private var isPlaying = false
 
@@ -51,7 +54,6 @@ class ConverterViewModel @Inject constructor(
 
                 for (i in 0 until state.code.size) {
                     val letterCode = state.code[i]
-                    val codeLength = letterCode.code.size
                     for (j in 0 until letterCode.code.size) {
                         val symbol = letterCode.code[j]
                         _playedIndex.emit(Pair(i, j))
@@ -61,9 +63,16 @@ class ConverterViewModel @Inject constructor(
                             return@launch
                         }
 
-                        when(symbol) {
-                            Symbol.DOT -> delay(200)
-                            Symbol.DASH -> delay(300)
+                        when (symbol) {
+                            Symbol.DOT -> {
+                                soundPlayerService.playSound(R.raw.dot)
+                                delay(110)
+                            }
+
+                            Symbol.DASH -> {
+                                soundPlayerService.playSound(R.raw.dash)
+                                delay(200)
+                            }
                         }
                     }
 
