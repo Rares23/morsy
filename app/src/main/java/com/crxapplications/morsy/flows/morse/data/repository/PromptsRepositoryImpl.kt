@@ -28,4 +28,8 @@ class PromptsRepositoryImpl @Inject constructor(
         }.toPrompt()
     }
 
+    override suspend fun delete(id: Long): Int {
+        return promptsDao.delete(id)
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.crxapplications.morsy.flows.morse.presentation.viewmodel
 
 sealed class PromptFormEvent {
+    object LoadDataEvent : PromptFormEvent()
+
     data class OnTextChangeEvent(
         val text: String,
     ) : PromptFormEvent()
@@ -9,4 +11,8 @@ sealed class PromptFormEvent {
         val text: String,
         val openConverter: (String) -> Unit,
     ) : PromptFormEvent()
+
+    data class DeletePromptEvent(
+        val id: Long
+    ): PromptFormEvent()
 }

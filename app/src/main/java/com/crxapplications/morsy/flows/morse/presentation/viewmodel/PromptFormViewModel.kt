@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.crxapplications.morsy.core.helper.Response
 import com.crxapplications.morsy.core.helper.UiText
 import com.crxapplications.morsy.flows.morse.domain.model.Prompt
+import com.crxapplications.morsy.flows.morse.domain.usecase.DeletePromptUseCase
 import com.crxapplications.morsy.flows.morse.domain.usecase.GetPromptsHistoryUseCase
 import com.crxapplications.morsy.flows.morse.domain.usecase.SavePromptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 class PromptFormViewModel @Inject constructor(
     private val savePromptUseCase: SavePromptUseCase,
     private val getPromptsHistoryUseCase: GetPromptsHistoryUseCase,
+    private val deletePromptUseCase: DeletePromptUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow<PromptFormState>(PromptFormState.LoadingState)
     val state: StateFlow<PromptFormState> = _state.asStateFlow()
@@ -31,6 +33,19 @@ class PromptFormViewModel @Inject constructor(
     val toastMessage = _toastMessage.asSharedFlow()
 
     init {
+        addEvent(PromptFormEvent.LoadDataEvent)
+    }
+
+    fun addEvent(event: PromptFormEvent) {
+        when (event) {
+            is PromptFormEvent.OnTextChangeEvent -> onTextChangeEvent(event)
+            is PromptFormEvent.SubmitNewPromptEvent -> onSubmitNewPromptEvent(event)
+            is PromptFormEvent.DeletePromptEvent -> onDeleteEvent(event)
+            PromptFormEvent.LoadDataEvent -> loadPrompts()
+        }
+    }
+
+    private fun loadPrompts() {
         viewModelScope.launch {
             _state.emit(PromptFormState.LoadingState)
 
@@ -57,10 +72,29 @@ class PromptFormViewModel @Inject constructor(
         }
     }
 
-    fun addEvent(event: PromptFormEvent) {
-        when (event) {
-            is PromptFormEvent.OnTextChangeEvent -> onTextChangeEvent(event)
-            is PromptFormEvent.SubmitNewPromptEvent -> onSubmitNewPromptEvent(event)
+    private fun onDeleteEvent(event: PromptFormEvent.DeletePromptEvent) {
+        viewModelScope.launch {
+            when (val response = deletePromptUseCase.invoke(event.id)) {
+                is Response.SuccessResponse -> {
+                    state.value.let {
+                        when (it) {
+                            is PromptFormState.DataLoadedState -> {
+                                _state.emit(it.copy(
+                                    promptsHistory = it.promptsHistory.filter { prompt ->
+                                        prompt.id != event.id
+                                    }
+                                ))
+                            }
+
+                            else -> {
+                                addEvent(PromptFormEvent.LoadDataEvent)
+                            }
+                        }
+                    }
+                }
+
+                is Response.ErrorResponse -> _toastMessage.emit(response.message)
+            }
         }
     }
 

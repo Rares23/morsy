@@ -6,6 +6,8 @@ import com.crxapplications.morsy.flows.morse.domain.repository.CodeRepository
 import com.crxapplications.morsy.flows.morse.domain.repository.PromptsRepository
 import com.crxapplications.morsy.flows.morse.domain.usecase.ConvertToMorseCodeUseCase
 import com.crxapplications.morsy.flows.morse.domain.usecase.ConvertToMorseCodeUseCaseImpl
+import com.crxapplications.morsy.flows.morse.domain.usecase.DeletePromptUseCase
+import com.crxapplications.morsy.flows.morse.domain.usecase.DeletePromptUseCaseImpl
 import com.crxapplications.morsy.flows.morse.domain.usecase.GetPromptsHistoryUseCase
 import com.crxapplications.morsy.flows.morse.domain.usecase.GetPromptsHistoryUseCaseImpl
 import com.crxapplications.morsy.flows.morse.domain.usecase.SavePromptUseCase
@@ -40,4 +42,9 @@ abstract class MorseModule {
     abstract fun bindCodeRepository(
         codeRepositoryImpl: CodeRepositoryImpl,
     ): CodeRepository
+
+    @Binds
+    abstract fun bindDeleteUseCase(
+        deletePromptUseCaseImpl: DeletePromptUseCaseImpl,
+    ): DeletePromptUseCase
 }

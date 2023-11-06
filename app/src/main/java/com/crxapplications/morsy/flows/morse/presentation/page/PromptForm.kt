@@ -146,6 +146,9 @@ fun PromptFormPage(
                             prompt = promptsList[index],
                             onCardPress = { text ->
                                 openConverterPage(text)
+                            },
+                            onDeletePress = { id ->
+                                promptFormViewModel.addEvent(PromptFormEvent.DeletePromptEvent(id = id))
                             }
                         )
                     }

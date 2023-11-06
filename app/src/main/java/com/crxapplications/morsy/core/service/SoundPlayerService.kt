@@ -33,7 +33,7 @@ class SoundPlayerServiceImpl @Inject constructor(
         val builder = SoundPool.Builder()
         builder.setAudioAttributes(audioAttrib).setMaxStreams(5)
         soundPool = builder.build().apply {
-            setOnLoadCompleteListener { soundPool, sampleId, status ->
+            setOnLoadCompleteListener { _, _, _ ->
                 loaded = true
             }
 
