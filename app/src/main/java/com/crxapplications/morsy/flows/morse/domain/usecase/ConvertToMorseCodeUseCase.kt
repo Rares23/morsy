@@ -3,6 +3,7 @@ package com.crxapplications.morsy.flows.morse.domain.usecase
 import com.crxapplications.morsy.core.helper.Response
 import com.crxapplications.morsy.core.helper.toUiText
 import com.crxapplications.morsy.flows.morse.domain.model.LetterCode
+import com.crxapplications.morsy.flows.morse.domain.model.Symbol
 import com.crxapplications.morsy.flows.morse.domain.repository.CodeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,9 +23,13 @@ class ConvertToMorseCodeUseCaseImpl @Inject constructor(private val codeReposito
                 val result = ArrayList<LetterCode>()
 
                 text.forEach { character ->
-                    val code = codeMap[character.uppercase()]
-                    if (!code.isNullOrEmpty()) {
-                        result.add(LetterCode(letter = character.uppercase(), code = code))
+                    if (character == ' ') {
+                        result.add(LetterCode(letter = " ", code = listOf(Symbol.SPACE)))
+                    } else {
+                        val code = codeMap[character.uppercase()]
+                        if (!code.isNullOrEmpty()) {
+                            result.add(LetterCode(letter = character.uppercase(), code = code))
+                        }
                     }
                 }
 

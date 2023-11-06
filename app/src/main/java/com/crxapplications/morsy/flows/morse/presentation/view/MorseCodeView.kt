@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -129,6 +130,12 @@ fun CodeComponent(
                                     .size(width = (dotSize * 3).dp, height = dotSize.dp)
                                     .clip(RoundedCornerShape(10.dp))
                                     .background(color)
+                            )
+                        }
+
+                        else -> {
+                            Box(
+                                modifier = Modifier.size(width = 0.dp, height = dotSize.dp)
                             )
                         }
                     }

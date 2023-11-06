@@ -66,17 +66,18 @@ class ConverterViewModel @Inject constructor(
                         when (symbol) {
                             Symbol.DOT -> {
                                 soundPlayerService.playSound(R.raw.dot)
-                                delay(110)
+                                delay(140)
                             }
 
                             Symbol.DASH -> {
                                 soundPlayerService.playSound(R.raw.dash)
                                 delay(200)
                             }
+
+                            Symbol.SPACE -> delay(620)
                         }
                     }
-
-                    delay(400)
+                    delay(200)
                 }
             }
         }
