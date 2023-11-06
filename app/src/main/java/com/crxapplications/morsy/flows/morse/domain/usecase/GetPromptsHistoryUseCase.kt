@@ -20,7 +20,7 @@ class GetPromptsHistoryUseCaseImpl @Inject constructor(
     override suspend fun invoke(): Response<List<Prompt>> = withContext(Dispatchers.IO) {
         return@withContext try {
             Response.SuccessResponse(
-                value = promptsRepository.getAll()
+                value = promptsRepository.getAll().sortedByDescending { it.date }
             )
         } catch (e: Exception) {
             Response.ErrorResponse(

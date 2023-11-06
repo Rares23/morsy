@@ -128,7 +128,7 @@ class PromptFormViewModel @Inject constructor(
                                     promptInputValue = "",
                                     promptsHistory = state.promptsHistory.plus(
                                         response.value
-                                    )
+                                    ).sortedByDescending { it.date }
                                 )
                             )
 
