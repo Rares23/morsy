@@ -13,6 +13,10 @@ sealed class PromptFormEvent {
     ) : PromptFormEvent()
 
     data class DeletePromptEvent(
-        val id: Long
-    ): PromptFormEvent()
+        val id: Long,
+    ) : PromptFormEvent()
+
+    data class ChangeSavePromptsStateEvent(
+        val state: Boolean,
+    ) : PromptFormEvent()
 }

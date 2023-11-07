@@ -8,5 +8,6 @@ sealed class PromptFormState {
     data class DataLoadedState(
         val promptInputValue: String,
         val promptsHistory: List<Prompt> = emptyList(),
+        val savePrompts: Boolean,
     ) : PromptFormState()
 }

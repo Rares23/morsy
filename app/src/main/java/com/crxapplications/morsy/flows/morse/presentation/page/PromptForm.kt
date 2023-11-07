@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -60,6 +61,7 @@ fun PromptFormPage(
     val state by promptFormViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
     val isKeyboardShown by keyboardAsState()
+    var savePromptsState = false
 
     if (!isKeyboardShown) {
         focusManager.clearFocus()
@@ -71,6 +73,7 @@ fun PromptFormPage(
     (state as? PromptFormState.DataLoadedState)?.let {
         text = it.promptInputValue
         promptsList = it.promptsHistory
+        savePromptsState = it.savePrompts
     }
 
     LaunchedEffect(Unit) {
@@ -126,17 +129,24 @@ fun PromptFormPage(
                         Row(
                             modifier = Modifier.padding(horizontal = 16.dp)
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_info),
-                                contentDescription = stringResource(id = R.string.message_info_icd),
-                                tint = Grey
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(id = R.string.message_info_label),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Grey
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = stringResource(id = R.string.save_prompt_message_info_label),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                                Switch(checked = savePromptsState, onCheckedChange = {
+                                    promptFormViewModel.addEvent(
+                                        PromptFormEvent.ChangeSavePromptsStateEvent(
+                                            state = it
+                                        )
+                                    )
+                                })
+                            }
+
                         }
                     }
                     items(

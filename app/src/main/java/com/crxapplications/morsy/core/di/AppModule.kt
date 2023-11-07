@@ -8,6 +8,8 @@ import androidx.room.Room
 import com.crxapplications.morsy.core.data.database.MorsyDatabase
 import com.crxapplications.morsy.core.service.AssetsFileService
 import com.crxapplications.morsy.core.service.AssetsFileServiceImpl
+import com.crxapplications.morsy.core.service.SharedPreferencesService
+import com.crxapplications.morsy.core.service.SharedPreferencesServiceImpl
 import com.crxapplications.morsy.core.service.SoundPlayerService
 import com.crxapplications.morsy.core.service.SoundPlayerServiceImpl
 import com.crxapplications.morsy.flows.morse.data.dao.PromptsDao
@@ -58,6 +60,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSoundPlayerService(@ApplicationContext context: Context): SoundPlayerService = SoundPlayerServiceImpl(context = context)
+    fun provideSoundPlayerService(@ApplicationContext context: Context): SoundPlayerService =
+        SoundPlayerServiceImpl(context = context)
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferencesService(sharedPreferences: SharedPreferences): SharedPreferencesService =
+        SharedPreferencesServiceImpl(sharedPreferences = sharedPreferences)
 
 }

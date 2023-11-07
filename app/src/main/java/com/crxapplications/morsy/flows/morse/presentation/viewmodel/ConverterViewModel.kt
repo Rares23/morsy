@@ -79,6 +79,13 @@ class ConverterViewModel @Inject constructor(
                     }
                     delay(200)
                 }
+
+                isPlaying = false
+                _state.emit(
+                    state.copy(
+                        isPlaying = isPlaying
+                    )
+                )
             }
         }
     }

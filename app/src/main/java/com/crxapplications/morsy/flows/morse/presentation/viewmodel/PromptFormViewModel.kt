@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crxapplications.morsy.core.helper.Response
 import com.crxapplications.morsy.core.helper.UiText
+import com.crxapplications.morsy.core.service.SharedPreferencesService
 import com.crxapplications.morsy.flows.morse.domain.model.Prompt
 import com.crxapplications.morsy.flows.morse.domain.usecase.DeletePromptUseCase
 import com.crxapplications.morsy.flows.morse.domain.usecase.GetPromptsHistoryUseCase
@@ -25,6 +26,7 @@ class PromptFormViewModel @Inject constructor(
     private val savePromptUseCase: SavePromptUseCase,
     private val getPromptsHistoryUseCase: GetPromptsHistoryUseCase,
     private val deletePromptUseCase: DeletePromptUseCase,
+    private val sharedPreferencesService: SharedPreferencesService,
 ) : ViewModel() {
     private val _state = MutableStateFlow<PromptFormState>(PromptFormState.LoadingState)
     val state: StateFlow<PromptFormState> = _state.asStateFlow()
@@ -42,19 +44,39 @@ class PromptFormViewModel @Inject constructor(
             is PromptFormEvent.SubmitNewPromptEvent -> onSubmitNewPromptEvent(event)
             is PromptFormEvent.DeletePromptEvent -> onDeleteEvent(event)
             PromptFormEvent.LoadDataEvent -> loadPrompts()
+            is PromptFormEvent.ChangeSavePromptsStateEvent -> changeSavePromptsState(event)
+        }
+    }
+
+    private fun changeSavePromptsState(event: PromptFormEvent.ChangeSavePromptsStateEvent) {
+        viewModelScope.launch {
+            sharedPreferencesService.setSavePromptsState(event.state)
+
+            when (val state = state.value) {
+                is PromptFormState.DataLoadedState -> {
+                    _state.emit(
+                        state.copy(
+                            savePrompts = event.state
+                        )
+                    )
+                }
+
+                else -> {}
+            }
         }
     }
 
     private fun loadPrompts() {
         viewModelScope.launch {
             _state.emit(PromptFormState.LoadingState)
-
+            val savePromptsState = sharedPreferencesService.getSavePromptsState()
             when (val response = getPromptsHistoryUseCase.invoke()) {
                 is Response.SuccessResponse -> {
                     _state.emit(
                         PromptFormState.DataLoadedState(
                             promptInputValue = "",
-                            promptsHistory = response.value
+                            promptsHistory = response.value,
+                            savePrompts = savePromptsState,
                         )
                     )
                 }
@@ -63,6 +85,7 @@ class PromptFormViewModel @Inject constructor(
                     _state.emit(
                         PromptFormState.DataLoadedState(
                             promptInputValue = "",
+                            savePrompts = savePromptsState,
                         )
                     )
 
@@ -120,25 +143,38 @@ class PromptFormViewModel @Inject constructor(
             // save the new prompt
             when (val state = state.value) {
                 is PromptFormState.DataLoadedState -> {
-                    when (val response = savePromptUseCase.invoke(event.text)) {
-                        is Response.SuccessResponse -> {
-                            // Add the new prompt into the history list
-                            _state.emit(
-                                state.copy(
-                                    promptInputValue = "",
-                                    promptsHistory = state.promptsHistory.plus(
-                                        response.value
-                                    ).sortedByDescending { it.date }
+                    val savePrompts = sharedPreferencesService.getSavePromptsState()
+
+                    if (savePrompts) {
+                        when (val response = savePromptUseCase.invoke(event.text)) {
+                            is Response.SuccessResponse -> {
+                                // Add the new prompt into the history list
+                                _state.emit(
+                                    state.copy(
+                                        promptInputValue = "",
+                                        promptsHistory = state.promptsHistory.plus(
+                                            response.value
+                                        ).sortedByDescending { it.date }
+                                    )
                                 )
+
+                                // Open the converter with the specific text
+                                event.openConverter(event.text)
+                            }
+
+                            is Response.ErrorResponse -> {
+                                _toastMessage.emit(response.message)
+                            }
+                        }
+                    } else {
+                        _state.emit(
+                            state.copy(
+                                promptInputValue = "",
                             )
+                        )
 
-                            // Open the converter with the specific text
-                            event.openConverter(event.text)
-                        }
-
-                        is Response.ErrorResponse -> {
-                            _toastMessage.emit(response.message)
-                        }
+                        // Open the converter with the specific text directly without saving the prompt
+                        event.openConverter(event.text)
                     }
                 }
 

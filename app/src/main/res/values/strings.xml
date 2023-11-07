@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Morsy</string>
     <string name="generate_icd">Generate Code</string>
-    <string name="message_info_icd">Message Info</string>
-    <string name="message_info_label">All the prompts will be saved for later use!</string>
+    <string name="save_prompt_message_info_label">Save prompt for later use?</string>
     <string name="message_input_label">Message</string>
     <string name="play_code_icd">Play morse code</string>
     <string name="delete_icd">Delete</string>
