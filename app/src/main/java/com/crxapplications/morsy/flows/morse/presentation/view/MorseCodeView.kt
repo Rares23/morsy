@@ -36,10 +36,7 @@ fun MorseCodeView(
     showLetter: Boolean = true,
     currentPlayedIndexes: Pair<Int, Int>,
 ) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column{
         FlowRow(
             horizontalArrangement = Arrangement.Start,
             verticalArrangement = Arrangement.Top, modifier = Modifier.padding(top = 8.dp)

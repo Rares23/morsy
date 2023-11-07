@@ -7,7 +7,7 @@
     <string name="delete_icd">Delete</string>
     <string name="flash_button_icd">Flash</string>
     <string name="sound_button">Sound</string>
-    <string name="converter_page_title">Converted Message</string>
+    <string name="converter_page_title">Message</string>
     <string name="empty_prompts_list">You have no saved messages yet.</string>
     <string name="speed_slider_label">Speed</string>
     <string name="message_label">Your message</string>
