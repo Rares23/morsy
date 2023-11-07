@@ -6,6 +6,12 @@ import javax.inject.Inject
 interface SharedPreferencesService {
     fun setSavePromptsState(state: Boolean)
     fun getSavePromptsState(): Boolean
+
+    fun setSoundState(state: Boolean)
+    fun setFlashState(state: Boolean)
+
+    fun getSoundState(): Boolean
+    fun getFlashState(): Boolean
 }
 
 class SharedPreferencesServiceImpl @Inject constructor(
@@ -13,6 +19,8 @@ class SharedPreferencesServiceImpl @Inject constructor(
 ) : SharedPreferencesService {
     companion object {
         const val SAVE_PROMPTS = "SAVE_PROMPTS"
+        const val SOUND_ENABLED = "SOUND_ENABLED"
+        const val FLASH_ENABLED = "FLASH_ENABLED"
     }
 
     override fun setSavePromptsState(state: Boolean) {
@@ -20,5 +28,17 @@ class SharedPreferencesServiceImpl @Inject constructor(
     }
 
     override fun getSavePromptsState(): Boolean = sharedPreferences.getBoolean(SAVE_PROMPTS, true)
+    override fun setSoundState(state: Boolean) {
+        sharedPreferences.edit().putBoolean(SOUND_ENABLED, state).apply()
+    }
+
+    override fun setFlashState(state: Boolean) {
+        sharedPreferences.edit().putBoolean(FLASH_ENABLED, state).apply()
+    }
+
+    override fun getSoundState(): Boolean = sharedPreferences.getBoolean(SOUND_ENABLED, true)
+
+
+    override fun getFlashState(): Boolean = sharedPreferences.getBoolean(FLASH_ENABLED, true)
 
 }

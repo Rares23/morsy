@@ -1,11 +1,22 @@
 package com.crxapplications.morsy.flows.morse.presentation.page
 
 import android.widget.Toast
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,9 +35,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.crxapplications.morsy.R
 import com.crxapplications.morsy.core.helper.toString
@@ -53,76 +66,127 @@ fun ConverterPage(
     }
 
     LaunchedEffect(Unit) {
-        if (state is ConverterState.LoadingState) {
+        if (state.isLoading) {
             converterViewModel.addEvent(ConverterEvent.ConvertTextEvent(text = text))
         }
     }
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Hello", color = MaterialTheme.colorScheme.onPrimary) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
-                navigationIcon = {
-                    IconButton(onClick = { navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = {
+            Text(
+                stringResource(id = R.string.converter_page_title),
+                color = MaterialTheme.colorScheme.onPrimary
             )
-        },
-        content = { padding ->
-            Surface(modifier = Modifier.padding(padding)) {
-                when (state) {
-                    is ConverterState.LoadingState -> {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxSize()
+        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ), navigationIcon = {
+            IconButton(onClick = { navigateUp() }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        })
+    }, content = { padding ->
+        Surface(modifier = Modifier.padding(padding)) {
+            if (state.isLoading) {
+                return@Surface Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator()
+                }
+
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                    .padding(
+                        top = 16.dp
+                    )
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = {
+                            converterViewModel.addEvent(ConverterEvent.ToggleSoundState)
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(start = 16.dp, end = 8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            CircularProgressIndicator()
+                            val iconDrawable = if (state.soundEnabled) {
+                                R.drawable.ic_sound_on
+                            } else {
+                                R.drawable.ic_sound_off
+                            }
+
+                            Icon(
+                                painter = painterResource(id = iconDrawable),
+                                contentDescription = stringResource(id = R.string.sound_button),
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
                     }
 
-                    is ConverterState.DataLoadedState -> {
-                        MorseCodeView(
-                            code = (state as ConverterState.DataLoadedState).code,
-                            currentPlayedIndexes = playedIndexes
-                        )
+                    Button(
+                        onClick = {
+                            converterViewModel.addEvent(ConverterEvent.ToggleFlashState)
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .weight(.5f)
+                            .padding(start = 8.dp, end = 16.dp)
+
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val iconDrawable = if (state.flashEnabled) {
+                                R.drawable.ic_flash_on
+                            } else {
+                                R.drawable.ic_flash_off
+                            }
+
+                            Icon(
+                                painter = painterResource(id = iconDrawable),
+                                contentDescription = stringResource(id = R.string.flash_button_icd),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
-            }
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                (state as? ConverterState.DataLoadedState)?.let {
-                    if (it.isPlaying) {
-                        converterViewModel.addEvent(ConverterEvent.StopEvent)
-                    } else {
-                        converterViewModel.addEvent(ConverterEvent.PlayEvent)
-                    }
-                }
-            }) {
-                if (state is ConverterState.DataLoadedState) {
-                    val drawable = if ((state as ConverterState.DataLoadedState).isPlaying) {
-                        R.drawable.ic_stop
-                    } else {
-                        R.drawable.ic_play
-                    }
-                    Icon(
-                        painter = painterResource(
-                            id = drawable
-                        ),
-                        contentDescription = stringResource(id = R.string.play_code_icd)
-                    )
-                }
+
+                MorseCodeView(
+                    code = state.code, currentPlayedIndexes = playedIndexes
+                )
             }
         }
-    )
+    }, floatingActionButtonPosition = FabPosition.Center, floatingActionButton = {
+        FloatingActionButton(onClick = {
+            if (state.isPlaying) {
+                converterViewModel.addEvent(ConverterEvent.StopEvent)
+            } else {
+                converterViewModel.addEvent(ConverterEvent.PlayEvent)
+            }
+        }) {
+            val drawable = if (state.isPlaying) {
+                R.drawable.ic_stop
+            } else {
+                R.drawable.ic_play
+            }
+            Icon(
+                painter = painterResource(
+                    id = drawable
+                ), contentDescription = stringResource(id = R.string.play_code_icd)
+            )
+        }
+    })
 }

@@ -4,4 +4,6 @@ sealed class ConverterEvent {
     data class ConvertTextEvent(val text: String): ConverterEvent()
     object PlayEvent: ConverterEvent()
     object StopEvent: ConverterEvent()
+    object ToggleSoundState: ConverterEvent()
+    object ToggleFlashState: ConverterEvent()
 }

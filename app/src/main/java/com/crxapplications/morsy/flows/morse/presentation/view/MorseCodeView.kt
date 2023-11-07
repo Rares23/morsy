@@ -42,7 +42,7 @@ fun MorseCodeView(
     ) {
         FlowRow(
             horizontalArrangement = Arrangement.Start,
-            verticalArrangement = Arrangement.Top, modifier = Modifier.padding(16.dp)
+            verticalArrangement = Arrangement.Top, modifier = Modifier.padding(top = 8.dp)
         ) {
             code.forEachIndexed { index, letterCode ->
                 val fullyPlayed =
@@ -59,7 +59,7 @@ fun MorseCodeView(
                     }
                 }
 
-                if(letterCode.letter != " ") {
+                if (letterCode.letter != " ") {
                     CodeComponent(
                         letterCode = letterCode,
                         showLetter = showLetter,
