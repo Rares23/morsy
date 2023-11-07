@@ -1,9 +1,11 @@
 package com.crxapplications.morsy.flows.morse.presentation.page
 
+import android.graphics.Color
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -146,9 +148,31 @@ fun PromptFormPage(
                                     )
                                 })
                             }
+                        }
 
+                        if (promptsList.isEmpty()) {
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_menu),
+                                    contentDescription = null,
+                                    tint = Grey
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    stringResource(id = R.string.empty_prompts_list),
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        color = Grey
+                                    )
+                                )
+                            }
                         }
                     }
+
                     items(
                         count = promptsList.size,
                     ) { index ->

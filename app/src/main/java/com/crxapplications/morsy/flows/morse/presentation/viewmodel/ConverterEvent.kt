@@ -6,4 +6,5 @@ sealed class ConverterEvent {
     object StopEvent: ConverterEvent()
     object ToggleSoundState: ConverterEvent()
     object ToggleFlashState: ConverterEvent()
+    data class ChangeFrequencyEvent(val value: Float) : ConverterEvent()
 }

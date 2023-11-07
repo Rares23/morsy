@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -162,6 +163,32 @@ fun ConverterPage(
                             )
                         }
                     }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    Text(
+                        stringResource(id = R.string.speed_slider_label),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Slider(value = state.frequency, onValueChange = { value ->
+                        converterViewModel.addEvent(ConverterEvent.ChangeFrequencyEvent(value))
+                    })
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    Text(
+                        stringResource(id = R.string.message_label),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(state.text, style = MaterialTheme.typography.titleLarge)
                 }
 
                 MorseCodeView(

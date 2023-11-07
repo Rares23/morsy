@@ -8,5 +8,6 @@ data class ConverterState(
     val isPlaying: Boolean,
     val soundEnabled: Boolean,
     val flashEnabled: Boolean,
+    val frequency: Float,
     val isLoading: Boolean,
 )

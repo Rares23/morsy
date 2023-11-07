@@ -11,6 +11,8 @@ import com.crxapplications.morsy.core.service.SoundPlayerService
 import com.crxapplications.morsy.flows.morse.domain.model.Symbol
 import com.crxapplications.morsy.flows.morse.domain.usecase.ConvertToMorseCodeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +29,15 @@ class ConverterViewModel @Inject constructor(
     private val cameraService: CameraService,
     private val sharedPreferencesService: SharedPreferencesService,
 ) : ViewModel() {
+    companion object {
+        const val DOT_FREQUENCY = 140L
+        const val DASH_FREQUENCY = 300L
+        const val SPACE_DELAY = 620L
+        const val WORD_DELAY = 200L
+    }
+
+    private var playJob: Job? = null
+
     private val _state = MutableStateFlow(
         ConverterState(
             text = "",
@@ -34,7 +45,8 @@ class ConverterViewModel @Inject constructor(
             isPlaying = false,
             soundEnabled = false,
             flashEnabled = false,
-            isLoading = true
+            isLoading = true,
+            frequency = .5f
         )
     )
     val state: StateFlow<ConverterState> = _state.asStateFlow()
@@ -52,6 +64,19 @@ class ConverterViewModel @Inject constructor(
             ConverterEvent.PlayEvent -> play()
             ConverterEvent.ToggleFlashState -> toggleFlashState()
             ConverterEvent.ToggleSoundState -> toggleSoundState()
+            is ConverterEvent.ChangeFrequencyEvent -> changeFrequency(event)
+        }
+    }
+
+    private fun changeFrequency(event: ConverterEvent.ChangeFrequencyEvent) {
+        viewModelScope.launch {
+            sharedPreferencesService.setFrequency(event.value)
+
+            _state.emit(
+                _state.value.copy(
+                    frequency = event.value
+                )
+            )
         }
     }
 
@@ -61,7 +86,7 @@ class ConverterViewModel @Inject constructor(
             sharedPreferencesService.setFlashState(newState)
 
             // make sure to turn off the flash
-            if(!newState) {
+            if (!newState) {
                 cameraService.handleFlash(false)
             }
 
@@ -86,7 +111,9 @@ class ConverterViewModel @Inject constructor(
     }
 
     private fun play() {
-        viewModelScope.launch {
+        playJob?.cancel()
+
+        playJob = viewModelScope.launch {
             _state.emit(
                 _state.value.copy(
                     isPlaying = true
@@ -113,7 +140,8 @@ class ConverterViewModel @Inject constructor(
                                 cameraService.handleFlash(true)
                             }
 
-                            delay(140)
+                            val minDotFrequency = DOT_FREQUENCY / 2
+                            delay((minDotFrequency + DOT_FREQUENCY * _state.value.frequency).toLong())
 
                             if (_state.value.flashEnabled) {
                                 cameraService.handleFlash(false)
@@ -127,16 +155,22 @@ class ConverterViewModel @Inject constructor(
                             if (_state.value.flashEnabled) {
                                 cameraService.handleFlash(true)
                             }
-                            delay(300)
+                            val minDashFrequency = DASH_FREQUENCY / 2
+                            delay(minDashFrequency + (DASH_FREQUENCY * _state.value.frequency).toLong())
                             if (_state.value.flashEnabled) {
                                 cameraService.handleFlash(false)
                             }
                         }
 
-                        Symbol.SPACE -> delay(620)
+                        Symbol.SPACE -> {
+                            val minSpaceFrequency = SPACE_DELAY / 2
+                            delay(minSpaceFrequency + (SPACE_DELAY * _state.value.frequency).toLong())
+                        }
                     }
                 }
-                delay(200)
+
+                val minWordFrequency = WORD_DELAY / 2
+                delay(minWordFrequency + (WORD_DELAY * _state.value.frequency).toLong())
             }
 
             _state.emit(
@@ -166,6 +200,7 @@ class ConverterViewModel @Inject constructor(
                             soundEnabled = sharedPreferencesService.getSoundState(),
                             flashEnabled = sharedPreferencesService.getFlashState(),
                             isLoading = false,
+                            frequency = sharedPreferencesService.getFrequency()
                         )
                     )
                 }

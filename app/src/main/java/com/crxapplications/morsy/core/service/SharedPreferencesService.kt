@@ -12,6 +12,9 @@ interface SharedPreferencesService {
 
     fun getSoundState(): Boolean
     fun getFlashState(): Boolean
+
+    fun setFrequency(value: Float)
+    fun getFrequency(): Float
 }
 
 class SharedPreferencesServiceImpl @Inject constructor(
@@ -21,6 +24,7 @@ class SharedPreferencesServiceImpl @Inject constructor(
         const val SAVE_PROMPTS = "SAVE_PROMPTS"
         const val SOUND_ENABLED = "SOUND_ENABLED"
         const val FLASH_ENABLED = "FLASH_ENABLED"
+        const val FREQUENCY = "FREQUENCY"
     }
 
     override fun setSavePromptsState(state: Boolean) {
@@ -40,5 +44,11 @@ class SharedPreferencesServiceImpl @Inject constructor(
 
 
     override fun getFlashState(): Boolean = sharedPreferences.getBoolean(FLASH_ENABLED, true)
+    override fun setFrequency(value: Float) {
+        sharedPreferences.edit().putFloat(FREQUENCY, value).apply()
+    }
+
+    override fun getFrequency(): Float = sharedPreferences.getFloat(FREQUENCY, 0.5f)
+
 
 }
