@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.crxapplications.morsy.R
 import com.crxapplications.morsy.core.helper.Response
 import com.crxapplications.morsy.core.helper.UiText
+import com.crxapplications.morsy.core.service.CameraService
 import com.crxapplications.morsy.core.service.SoundPlayerService
 import com.crxapplications.morsy.flows.morse.domain.model.Symbol
 import com.crxapplications.morsy.flows.morse.domain.usecase.ConvertToMorseCodeUseCase
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class ConverterViewModel @Inject constructor(
     private val convertToMorseCodeUseCase: ConvertToMorseCodeUseCase,
     private val soundPlayerService: SoundPlayerService,
+    private val cameraService: CameraService
 ) : ViewModel() {
     private var isPlaying = false
 
@@ -66,12 +68,16 @@ class ConverterViewModel @Inject constructor(
                         when (symbol) {
                             Symbol.DOT -> {
                                 soundPlayerService.playSound(R.raw.dot)
+                                cameraService.handleFlash(true)
                                 delay(140)
+                                cameraService.handleFlash(false)
                             }
 
                             Symbol.DASH -> {
                                 soundPlayerService.playSound(R.raw.dash)
-                                delay(200)
+                                cameraService.handleFlash(true)
+                                delay(300)
+                                cameraService.handleFlash(false)
                             }
 
                             Symbol.SPACE -> delay(620)

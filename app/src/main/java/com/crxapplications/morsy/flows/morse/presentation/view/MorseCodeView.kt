@@ -59,14 +59,14 @@ fun MorseCodeView(
                     }
                 }
 
-                CodeComponent(
-                    letterCode = letterCode,
-                    showLetter = showLetter,
-                    fullyPlayed = fullyPlayed,
-                    currentPlayedIndex = currentPlayedIndex
-                )
-                Spacer(Modifier.width(8.dp))
-                if (letterCode.letter == " ") {
+                if(letterCode.letter != " ") {
+                    CodeComponent(
+                        letterCode = letterCode,
+                        showLetter = showLetter,
+                        fullyPlayed = fullyPlayed,
+                        currentPlayedIndex = currentPlayedIndex
+                    )
+                } else {
                     Spacer(Modifier.width(8.dp))
                 }
             }
@@ -83,24 +83,24 @@ fun CodeComponent(
     currentPlayedIndex: Int,
 ) {
     Card(
-        modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 4.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
         ) {
 
             if (showLetter) {
                 Text(
                     letterCode.letter,
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Bold,
                         color = if (fullyPlayed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground.copy(
                             alpha = 0.4f
                         )
                     )
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
             }
 
             Row {
@@ -111,7 +111,7 @@ fun CodeComponent(
                         MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                     }
 
-                    val dotSize = 12
+                    val dotSize = 6
                     when (symbol) {
                         Symbol.DOT -> {
                             Box(
@@ -141,6 +141,8 @@ fun CodeComponent(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }

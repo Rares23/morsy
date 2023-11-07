@@ -4,10 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.AssetManager
+import android.graphics.Camera
 import androidx.room.Room
 import com.crxapplications.morsy.core.data.database.MorsyDatabase
 import com.crxapplications.morsy.core.service.AssetsFileService
 import com.crxapplications.morsy.core.service.AssetsFileServiceImpl
+import com.crxapplications.morsy.core.service.CameraService
+import com.crxapplications.morsy.core.service.CameraServiceImpl
 import com.crxapplications.morsy.core.service.SharedPreferencesService
 import com.crxapplications.morsy.core.service.SharedPreferencesServiceImpl
 import com.crxapplications.morsy.core.service.SoundPlayerService
@@ -67,5 +70,12 @@ object AppModule {
     @Provides
     fun provideSharedPreferencesService(sharedPreferences: SharedPreferences): SharedPreferencesService =
         SharedPreferencesServiceImpl(sharedPreferences = sharedPreferences)
+
+    @Singleton
+    @Provides
+    fun provideCameraService(@ApplicationContext context: Context): CameraService =
+        CameraServiceImpl(
+            context = context
+        )
 
 }

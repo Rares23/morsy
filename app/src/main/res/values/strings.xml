@@ -5,6 +5,10 @@
     <string name="message_input_label">Message</string>
     <string name="play_code_icd">Play morse code</string>
     <string name="delete_icd">Delete</string>
+    <string name="enable_flash_button">Enable flash</string>
+    <string name="disable_flash_button">Disable flash</string>
+    <string name="enable_sound_button">Enable sound</string>
+    <string name="disable_sound_button">Disable sound</string>
     <!--  Errors  -->
     <string name="general_error">Something went wrong!</string>
 </resources>
