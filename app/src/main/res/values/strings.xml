@@ -11,6 +11,7 @@
     <string name="empty_prompts_list">You have no saved messages yet.</string>
     <string name="speed_slider_label">Speed</string>
     <string name="message_label">Your message</string>
+    <string name="code_label">Coded message</string>
     <!--  Errors  -->
     <string name="general_error">Something went wrong!</string>
 </resources>

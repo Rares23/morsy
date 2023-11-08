@@ -1,5 +1,7 @@
 package com.crxapplications.morsy.flows.morse.presentation.viewmodel
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crxapplications.morsy.R
@@ -123,6 +125,8 @@ class ConverterViewModel @Inject constructor(
             for (i in 0 until _state.value.code.size) {
                 val letterCode = _state.value.code[i]
                 for (j in 0 until letterCode.code.size) {
+                    val speed = 1f - _state.value.frequency
+
                     val symbol = letterCode.code[j]
                     _playedIndex.emit(Pair(i, j))
 
@@ -141,7 +145,7 @@ class ConverterViewModel @Inject constructor(
                             }
 
                             val minDotFrequency = DOT_FREQUENCY / 2
-                            delay((minDotFrequency + DOT_FREQUENCY * _state.value.frequency).toLong())
+                            delay((minDotFrequency + DOT_FREQUENCY * speed).toLong())
 
                             if (_state.value.flashEnabled) {
                                 cameraService.handleFlash(false)
@@ -156,7 +160,7 @@ class ConverterViewModel @Inject constructor(
                                 cameraService.handleFlash(true)
                             }
                             val minDashFrequency = DASH_FREQUENCY / 2
-                            delay(minDashFrequency + (DASH_FREQUENCY * _state.value.frequency).toLong())
+                            delay(minDashFrequency + (DASH_FREQUENCY * speed).toLong())
                             if (_state.value.flashEnabled) {
                                 cameraService.handleFlash(false)
                             }
@@ -164,13 +168,14 @@ class ConverterViewModel @Inject constructor(
 
                         Symbol.SPACE -> {
                             val minSpaceFrequency = SPACE_DELAY / 2
-                            delay(minSpaceFrequency + (SPACE_DELAY * _state.value.frequency).toLong())
+                            delay(minSpaceFrequency + (SPACE_DELAY * speed).toLong())
                         }
                     }
                 }
 
                 val minWordFrequency = WORD_DELAY / 2
-                delay(minWordFrequency + (WORD_DELAY * _state.value.frequency).toLong())
+                val speed = 1f - _state.value.frequency
+                delay(minWordFrequency + (WORD_DELAY * speed).toLong())
             }
 
             _state.emit(
@@ -178,6 +183,10 @@ class ConverterViewModel @Inject constructor(
                     isPlaying = false
                 )
             )
+        }
+
+        playJob?.invokeOnCompletion {
+            stop()
         }
     }
 

@@ -33,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,11 +41,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import com.crxapplications.morsy.R
+import com.crxapplications.morsy.core.helper.ComposableLifecycle
 import com.crxapplications.morsy.core.helper.toString
 import com.crxapplications.morsy.flows.morse.presentation.view.MorseCodeView
 import com.crxapplications.morsy.flows.morse.presentation.viewmodel.ConverterEvent
@@ -61,6 +67,12 @@ fun ConverterPage(
     val context = LocalContext.current
     val state by converterViewModel.state.collectAsState()
     val playedIndexes by converterViewModel.playedIndex.collectAsState()
+
+    ComposableLifecycle { _, event ->
+        if (event == Lifecycle.Event.ON_PAUSE) {
+            println("ON PAUSE")
+        }
+    }
 
     LaunchedEffect(Unit) {
         converterViewModel.toastMessage.collect { message ->
@@ -194,6 +206,17 @@ fun ConverterPage(
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(state.text, style = MaterialTheme.typography.titleLarge)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.code_label),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
 
                 MorseCodeView(
