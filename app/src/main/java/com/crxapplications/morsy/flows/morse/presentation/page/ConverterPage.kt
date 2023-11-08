@@ -70,7 +70,7 @@ fun ConverterPage(
 
     ComposableLifecycle { _, event ->
         if (event == Lifecycle.Event.ON_PAUSE) {
-            println("ON PAUSE")
+            converterViewModel.addEvent(ConverterEvent.StopEvent)
         }
     }
 
